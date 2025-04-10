@@ -1,14 +1,14 @@
-import {useState} from 'react';
-import React from 'react';
-import {View} from 'react-native';
+import {useState, useEffect} from 'react';
 
 interface UseFormProps<T> {
   initialValues: T;
+  validate: (values: T) => Record<keyof T, string>;
 }
 
-export default function useForm<T>({initialValues}: UseFormProps<T>) {
+export default function useForm<T>({initialValues, validate}: UseFormProps<T>) {
   const [values, setValues] = useState(initialValues);
-  const [touched, setTouched] = useState<Record<string, boolean>>();
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [errors, setErros] = useState<Record<string, string>>({});
 
   const handleChangeText = (name: keyof T, text: string) => {
     setValues({
@@ -36,5 +36,10 @@ export default function useForm<T>({initialValues}: UseFormProps<T>) {
     return {value, onChangeText, onBlur};
   };
 
-  return {values, touched, getTextInputProps};
+  useEffect(() => {
+    const newErrors = validate(values);
+    setErros(newErrors);
+  }, [validate, values]);
+
+  return {values, errors, touched, getTextInputProps};
 }

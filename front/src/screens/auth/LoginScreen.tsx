@@ -1,9 +1,10 @@
-import React, {useState} from 'react';
-import {SafeAreaView, View, StyleSheet, Text} from 'react-native';
+import React from 'react';
+import {SafeAreaView, View, StyleSheet} from 'react-native';
 
 import InputField from '../../components/InputField';
 import CustomButton from '../../components/CustomButton';
 import useForm from '../../hook/useForm';
+import {validateLogin} from '../../utils';
 
 export default function LoginScreen() {
   // const [email, setEmail] = useState('');
@@ -51,6 +52,7 @@ export default function LoginScreen() {
       email: '',
       password: '',
     },
+    validate: validateLogin,
   });
 
   const handleSubmit = () => {
@@ -62,7 +64,7 @@ export default function LoginScreen() {
       <View style={styles.inputContainer}>
         <InputField
           placeholder="이메일"
-          error={'이메일을 입력해주세요.'}
+          error={login.errors.email}
           touched={login.touched?.email}
           inputMode="email"
           // value={values.email}
@@ -72,12 +74,12 @@ export default function LoginScreen() {
         />
         <InputField
           placeholder="비밀번호"
-          error={'비밀번호를 입력해주세요.'}
+          error={login.errors.password}
           touched={login.touched?.password}
           // value={values.password}
           // onChangeText={text => handleChangeText('password', text)}
-          // secureTextEntry
           // onBlur={() => handleBlur('password')}
+          secureTextEntry
           {...login.getTextInputProps('password')}
         />
       </View>
