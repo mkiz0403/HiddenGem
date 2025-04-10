@@ -46,10 +46,12 @@ const styles = StyleSheet.create({
   imageContainer: {
     flex: 1.5,
     width: Dimensions.get('screen').width / 2,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   image: {
-    width: '100%',
-    height: '100%',
+    width: '130%',
+    height: '130%',
   },
   buttonContainer: {
     flex: 1,
