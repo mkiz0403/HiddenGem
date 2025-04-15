@@ -8,8 +8,8 @@ import {
   Pressable,
 } from 'react-native';
 import {colors} from '../constants';
-import {useRef} from 'react';
-
+import {useRef, forwardRef, ForwardedRef} from 'react';
+import mergeRefs from '../utils/common';
 interface InputFieldProps extends TextInputProps {
   disabled?: boolean;
   error?: string;
@@ -18,40 +18,44 @@ interface InputFieldProps extends TextInputProps {
 
 const deviceHeight = Dimensions.get('screen').height;
 
-export default function InputField({
-  disabled = false,
-  error,
-  touched,
-  ...props
-}: InputFieldProps) {
-  const innerRef = useRef<TextInput | null>(null); // useRef 참고
+const InputField = forwardRef(
+  (
+    {disabled = false, error, touched, ...props}: InputFieldProps,
+    ref?: ForwardedRef<TextInput>,
+  ) => {
+    const innerRef = useRef<TextInput | null>(null); // useRef 참고
 
-  const handlePressInput = () => {
-    innerRef.current?.focus();
-  };
-  return (
-    <Pressable onPress={handlePressInput}>
-      <View
-        style={[
-          styles.container,
-          disabled && styles.disabled,
-          touched && Boolean(error) && styles.inputError,
-        ]}>
-        <TextInput
-          ref={innerRef}
-          editable={!disabled}
-          placeholderTextColor={colors.GRAY_500}
-          style={[styles.input, disabled && styles.disabled]}
-          autoCapitalize="none"
-          spellCheck={false}
-          autoCorrect={false}
-          {...props}
-        />
-        {touched && Boolean(error) && <Text style={styles.error}>{error}</Text>}
-      </View>
-    </Pressable>
-  );
-}
+    const handlePressInput = () => {
+      innerRef.current?.focus();
+    };
+    return (
+      <Pressable onPress={handlePressInput}>
+        <View
+          style={[
+            styles.container,
+            disabled && styles.disabled,
+            touched && Boolean(error) && styles.inputError,
+          ]}>
+          <TextInput
+            ref={ref ? mergeRefs(innerRef, ref) : innerRef}
+            editable={!disabled}
+            placeholderTextColor={colors.GRAY_500}
+            style={[styles.input, disabled && styles.disabled]}
+            autoCapitalize="none"
+            spellCheck={false}
+            autoCorrect={false}
+            {...props}
+          />
+          {touched && Boolean(error) && (
+            <Text style={styles.error}>{error}</Text>
+          )}
+        </View>
+      </Pressable>
+    );
+  },
+);
+
+export default InputField;
 
 const styles = StyleSheet.create({
   container: {

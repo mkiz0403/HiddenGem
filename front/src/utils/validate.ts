@@ -1,11 +1,9 @@
-import {useCallback} from 'react';
-
 interface UserInformation {
   email: string;
   password: string;
 }
 
-export const validateLogin = (values: UserInformation) => {
+function validateUser(values: UserInformation) {
   const errors = {
     email: '',
     password: '',
@@ -20,4 +18,21 @@ export const validateLogin = (values: UserInformation) => {
   }
 
   return errors;
+}
+
+export const validateLogin = (values: UserInformation) => {
+  return validateUser(values);
+};
+
+export const validateSignup = (
+  values: UserInformation & {passwordConfirm: string},
+) => {
+  const errors = validateUser(values);
+  const signupErrors = {...errors, passwordConfirm: ''};
+
+  if (values.password !== values.passwordConfirm) {
+    signupErrors.passwordConfirm = '비밀번호가 일치하지 않습니다.';
+  }
+
+  return signupErrors;
 };

@@ -1,5 +1,5 @@
-import React from 'react';
-import {SafeAreaView, View, StyleSheet} from 'react-native';
+import React, {useState, useRef} from 'react';
+import {SafeAreaView, View, StyleSheet, TextInput} from 'react-native';
 
 import InputField from '../../components/InputField';
 import CustomButton from '../../components/CustomButton';
@@ -7,6 +7,8 @@ import useForm from '../../hook/useForm';
 import {validateLogin} from '../../utils';
 
 export default function LoginScreen() {
+  const passwordRef = useRef<TextInput | null>(null);
+
   // const [email, setEmail] = useState('');
   // const [password, setPassword] = useState('');
 
@@ -63,6 +65,7 @@ export default function LoginScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.inputContainer}>
         <InputField
+          autoFocus
           placeholder="이메일"
           error={login.errors.email}
           touched={login.touched?.email}
@@ -70,9 +73,13 @@ export default function LoginScreen() {
           // value={values.email}
           // onChangeText={text => handleChangeText('email', text)}
           // onBlur={() => handleBlur('email')}
+          returnKeyType="next"
+          submitBehavior="submit"
+          onSubmitEditing={() => passwordRef.current?.focus()}
           {...login.getTextInputProps('email')}
         />
         <InputField
+          ref={passwordRef}
           placeholder="비밀번호"
           error={login.errors.password}
           touched={login.touched?.password}
@@ -80,6 +87,9 @@ export default function LoginScreen() {
           // onChangeText={text => handleChangeText('password', text)}
           // onBlur={() => handleBlur('password')}
           secureTextEntry
+          textContentType="oneTimeCode"
+          returnKeyType="join" // 하단 엔터 버튼에 해당 문구로 표시됨
+          onSubmitEditing={handleSubmit}
           {...login.getTextInputProps('password')}
         />
       </View>
